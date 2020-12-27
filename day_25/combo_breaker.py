@@ -6,7 +6,6 @@ def parse_input():
 
 	return input_nums
 
-
 def find_discrete_log(base, mod, result):
 	power = 1
 

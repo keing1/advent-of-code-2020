@@ -12,31 +12,35 @@ def parse_instructions():
 	
 	return parsed_instruction_list
 
+def take_step(parsed_instructions, curr_line, curr_acc):
+	curr_line_tuple = parsed_instructions[curr_line]
+	curr_instr_name = curr_line_tuple[0]
+	curr_instr_value = curr_line_tuple[1]
+
+	if curr_instr_name == 'acc':
+		curr_acc += curr_instr_value
+		curr_line += 1
+	elif curr_instr_name == 'jmp':
+		curr_line += curr_instr_value
+	elif curr_instr_name == 'nop':
+		curr_line += 1
+	else:
+		raise InvalidArgumentError
+	return curr_line, curr_acc
+
 def find_instruction_loop_acc(parsed_instructions):
 	visited_lines = set()
 
-	current_line = 0
-	acc_value = 0
-
+	curr_line = 0
+	curr_acc = 0
 	while True:
-		if current_line in visited_lines:
+		if curr_line in visited_lines:
 			break
 		else:
-			visited_lines.add(current_line)
-		curr_line_tuple = parsed_instructions[current_line]
-		curr_instr_name = curr_line_tuple[0]
-		curr_instr_value = curr_line_tuple[1]
+			visited_lines.add(curr_line)
+		curr_line, curr_acc = take_step(parsed_instructions, curr_line, curr_acc)
 
-		if curr_instr_name == 'acc':
-			acc_value += curr_instr_value
-			current_line += 1
-		elif curr_instr_name == 'jmp':
-			current_line += curr_instr_value
-		elif curr_instr_name == 'nop':
-			current_line += 1
-		else:
-			raise InvalidArgumentError
-	return acc_value
+	return curr_acc
 
 def create_reverse_edge_graph(parsed_instructions):
 	edge_graph = {}
@@ -59,24 +63,14 @@ def create_reverse_edge_graph(parsed_instructions):
 
 def find_reachable_instructions(parsed_instructions):
 	reachable_instructions = set()
-	current_line = 0
+	curr_line = 0
+	curr_acc = 0
 	while True:
-		if current_line in reachable_instructions:
+		if curr_line in reachable_instructions:
 			break
 		else:
-			reachable_instructions.add(current_line)
-		curr_line_tuple = parsed_instructions[current_line]
-		curr_instr_name = curr_line_tuple[0]
-		curr_instr_value = curr_line_tuple[1]
-
-		if curr_instr_name == 'acc':
-			current_line += 1
-		elif curr_instr_name == 'jmp':
-			current_line += curr_instr_value
-		elif curr_instr_name == 'nop':
-			current_line += 1
-		else:
-			raise InvalidArgumentError
+			reachable_instructions.add(curr_line)
+		curr_line, curr_acc = take_step(parsed_instructions, curr_line, curr_acc)
 	return reachable_instructions
 
 def find_backwards_reachable_instructions(parsed_instructions):
@@ -142,27 +136,14 @@ def find_altered_code_acc(parsed_instructions):
 	else:
 		parsed_instructions[buggy_instr_line] = ('nop', buggy_instr_acc)
 
-	current_line = 0
-	acc_value = 0
-
+	curr_line = 0
+	curr_acc = 0
 	while True:
-		if current_line == len(parsed_instructions):
+		if curr_line == len(parsed_instructions):
 			break
-		curr_line_tuple = parsed_instructions[current_line]
-		curr_instr_name = curr_line_tuple[0]
-		curr_instr_value = curr_line_tuple[1]
+		curr_line, curr_acc = take_step(parsed_instructions, curr_line, curr_acc)
 
-		if curr_instr_name == 'acc':
-			acc_value += curr_instr_value
-			current_line += 1
-		elif curr_instr_name == 'jmp':
-			current_line += curr_instr_value
-		elif curr_instr_name == 'nop':
-			current_line += 1
-		else:
-			raise InvalidArgumentError
-
-	return acc_value
+	return curr_acc
 
 if __name__ == '__main__':
 	parsed_instructions = parse_instructions()

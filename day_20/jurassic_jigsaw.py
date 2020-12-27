@@ -177,7 +177,7 @@ def combine_tiles_together(tile_matching_dict, parsed_input):
 	elif adjacent_dir_set == {'bottom', 'right'}:
 		curr_pos = (0, 0)
 	else:
-		raise InvalidArgumentError()
+		raise ValueError()
 
 	opposite_dir_dict = {'top': 'bottom flipped', 'bottom': 'top flipped',
 		'right': 'left flipped', 'left': 'right flipped'}
@@ -234,7 +234,7 @@ def combine_tiles_together(tile_matching_dict, parsed_input):
 				elif adj_tile_dirs[0] == 'left':
 					new_pos = (curr_pos[0]-1, curr_pos[1])
 				else:
-					raise InvalidArgumentError()
+					raise ValueError()
 
 				tile_array[new_pos[1]][new_pos[0]] = reoriented_adj_tile
 				visited_set.add(adj_tile_id)

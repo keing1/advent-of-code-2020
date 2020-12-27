@@ -71,7 +71,7 @@ def find_safe_and_dangerous_ingredients(parsed_ingredients):
 			final_allergen_ingredient_mapping += [(allergen_value, i_value)]
 		else:
 			# Assuming this algorithm is sufficient, will raise error if not
-			raise InvalidArgumentError
+			raise ValueError()
 
 	sorted_final_mapping = sorted(final_allergen_ingredient_mapping, key=lambda x: x[0])
 	final_ingredients = [item[1] for item in sorted_final_mapping]
